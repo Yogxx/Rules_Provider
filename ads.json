@@ -953,7 +953,7 @@
       "identify.hotjar.com",
       "insights.hotjar.com",
       "script.hotjar.com",
-      "surveys.hotjar.com",
+      "surveys.hotjar.com"
       
     ],
     "domain_regex": [
