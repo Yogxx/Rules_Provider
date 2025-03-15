@@ -1,0 +1,32 @@
+{
+  "version": 1,
+  "rules": [
+    {
+      "domain": [
+        "rctiplus.id",
+        "rcti.plus",
+        "mncplus.com",
+        "visionplus.id",
+        "vidio.com",
+        "vidiocdn.com",
+        "moengage.com"
+      ],
+      "domain_suffix": [
+        "firestore.googleapis.com",
+        "sb.scorecardresearch.com",
+        "gcdn.rctiplus.id",
+        "static.rctiplus.id",
+        "zeus.rcti.plus",
+        "gtv-linier.rctiplus.id",
+        "analytics.mncplus.com",
+        "home.arpa",
+        "ff84ae928c3b33064b76dec08f12500465e59a6f.cws.conviva.com",
+        "pastevents.rctiplus.id",
+        "firebaselogging-pa.googleapis.com",
+        "geo-id-etslive-v3-vidio-com-tokenized.akamaized.net",
+        "etslive-v3-vidio-com-tokenized.akamaized.net"
+      ],
+      "domain_regex": "^[a-z]([a-z0-9-]{0,61}[a-z0-9])?$"
+    }
+  ]
+}
