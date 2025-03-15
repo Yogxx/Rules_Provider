@@ -1,0 +1,177 @@
+{
+  "log": {
+    "level": "panic"
+  },
+  "dns": {
+    "servers": [
+      {
+        "tag": "remote",
+        "address": "tcp://8.8.8.8"
+      },
+      {
+        "tag": "local",
+        "address": "112.215.203.254",
+        "detour": "DIRECT"
+      }
+    ],
+    "rules": [
+      {
+        "outbound": "any",
+        "server": "local",
+        "disable_cache": true
+      }
+    ],
+    "strategy": "prefer_ipv4",
+    "independent_cache": true
+  },
+  "inbounds": [
+    {
+      "type": "tun",
+      "tag": "tun-in",
+      "interface_name": "Meta",
+      "address": [
+          "172.19.0.1/30",
+          "fdfe:dcba:9876::1/126"
+        ],
+      "mtu": 9000,
+      "auto_route": true,
+      "strict_route": true,
+      "stack": "system",
+      "route_address": [
+          "0.0.0.0/1",
+          "128.0.0.0/1",
+          "::/1",
+          "8000::/1"
+        ],
+      "route_exclude_address": [
+          "192.168.0.0/16",
+          "fc00::/7"
+        ],
+      "sniff": true,
+      "sniff_override_destination": true
+    }
+  ],
+  "outbounds": [
+    {
+      "type": "selector",
+      "tag": "Selector",
+      "outbounds": [
+        "AUTO",
+        "BLOCK"
+      ],
+      "use_all_providers": true
+    },
+    {
+      "type": "urltest",
+      "tag": "AUTO",
+      "use_all_providers": true
+    },
+    {
+      "type": "direct",
+      "tag": "DIRECT"
+    },
+    {
+      "type": "block",
+      "tag": "BLOCK"
+    },
+    {
+      "type": "dns",
+      "tag": "DNS"
+    }
+  ],
+  "route": {
+    "rules": [
+      {
+        "protocol": "dns",
+        "outbound": "DNS"
+      },
+      {
+        "port": 53,
+        "outbound": "DNS"
+      },
+      {
+        "domain_suffix": [
+            "pagead2.googlesyndication.com",
+            "www3.doubleclick.net"
+        ],
+        "outbound": "BLOCK"
+      },
+      {
+        "domain_suffix": [
+            "ads.google.com",
+            "adservice.google.com",
+            "googleadservices.com",
+            "doubleclick.net",
+            "ad.doubleclick.net",
+            "analytics.google.com",
+            "cdn.mouseflow.com",
+            "amazonaax.com",
+            "affiliationjs.s3.amazonaws.com",
+            "appmetrica.yandex.com",
+            "ad.samsungadhub.com",
+            "samsungadhub.com",
+            "business.samsungusa.com",
+            "supportmetrics.apple.com",
+            "notify.bugsnag.com",
+            "sessions.bugsnag.com",
+            "api.bugsnag.com",
+            "app.bugsnag.com",
+            "browser.sentry-cdn.com",
+            "app.getsentry.com",
+            "widgets.pinterest.com"
+        ],
+        "outbound": "BLOCK"
+        
+      },
+      {
+        "rule_set": [
+            "ads",
+            "porn"
+        ],
+        "outbound": "BLOCK"
+            }
+    ],
+    "rule_set": [
+      {
+        "type": "remote",
+        "tag": "ads",
+        "format": "binary",
+        "download_detour": "AUTO",
+        "update_interval": "24h0m0s",
+        "path": "geosite-category-ads-all.srs",
+        "url": "https://raw.githubusercontent.com/Chocolate4U/Iran-sing-box-rules/rule-set/geosite-category-ads-all.srs"
+      },
+      {
+        "type": "remote",
+        "tag": "porn",
+        "format": "binary",
+        "download_detour": "AUTO",
+        "update_interval": "24h0m0s",
+        "path": "geosite-category-porn.srs",
+        "url": "https://raw.githubusercontent.com/Chocolate4U/Iran-sing-box-rules/rule-set/geosite-category-porn.srs"
+      }
+    ],
+    "final": "Selector",
+    "find_process": true,
+    "auto_detect_interface": true
+  },
+  "outbound_providers": [
+    {
+      "type": "local",
+      "path": "/opt/clash/akun.yaml",
+      "tag": "Proxy",
+      "enable_healthcheck": true,
+      "healthcheck_url": "https://www.gstatic.com/generate_204",
+      "healthcheck_interval": "2m0s"
+    }
+  ],
+  "experimental": {
+    "cache_file": {
+      "enabled": false
+    },
+    "clash_api": {
+      "external_controller": "0.0.0.0:9090",
+      "external_ui": "ui"
+    }
+  }
+}
