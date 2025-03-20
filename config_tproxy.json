@@ -1,0 +1,170 @@
+{
+  "log": {
+    "level": "panic",
+    "timestamp": true
+  },
+  "dns": {
+    "servers": [
+      {
+        "tag": "remote",
+        "address": [
+            "8.8.8.8",
+            "1.1.1.1"
+        ]
+      },
+      {
+        "tag": "local",
+        "address": ["112.215.203.254"],
+        "detour": "DIRECT"
+      }
+    ],
+    "rules": [
+      {
+        "outbound": "any",
+        "server": "local",
+        "disable_cache": true
+      }
+    ],
+    "strategy": "prefer_ipv4",
+    "independent_cache": true
+  },
+  "inbounds": [
+    {
+      "type": "tproxy",
+      "tag": "tproxy-in",
+      "listen": "0.0.0.0",
+      "listen_port": 7895
+    }
+  ],
+  "outbounds": [
+    {
+      "type": "selector",
+      "tag": "Internet",
+      "use_all_providers": true
+    },
+    {
+      "type": "urltest",
+      "tag": "UrlTest",
+      "use_all_providers": true
+    },
+    {
+      "type": "selector",
+      "tag": "GLOBAL",
+      "outbounds": [
+          "Internet",
+          "UrlTest"
+        ]
+    },
+    {
+      "type": "direct",
+      "tag": "DIRECT"
+    }
+  ],
+  "outbound_providers": [
+    {
+      "type": "local",
+      "path": "/opt/clash/akun.yaml",
+      "tag": "Proxy",
+      "enable_healthcheck": true,
+      "healthcheck_url": "https://www.gstatic.com/generate_204",
+      "healthcheck_interval": "2m0s"
+    }
+  ],
+  "route": {
+    "rules": [
+      {
+        "action": "sniff"
+      },
+      {
+        "type": "logical",
+        "mode": "or",
+        "rules": [
+          {
+            "port": 53
+          },
+          {
+            "protocol": "dns"
+          }
+        ],
+        "action": "hijack-dns"
+      },
+      {
+        "domain_suffix": [
+          "pagead2.googlesyndication.com",
+          "www3.doubleclick.net"
+        ],
+        "outbound": "Internet"
+      },
+      {
+        "domain_suffix": [
+          "ads.google.com",
+          "adservice.google.com",
+          "googleadservices.com",
+          "doubleclick.net",
+          "ad.doubleclick.net",
+          "analytics.google.com",
+          "cdn.mouseflow.com",
+          "amazonaax.com",
+          "affiliationjs.s3.amazonaws.com",
+          "appmetrica.yandex.com",
+          "ad.samsungadhub.com",
+          "samsungadhub.com",
+          "business.samsungusa.com",
+          "supportmetrics.apple.com",
+          "notify.bugsnag.com",
+          "sessions.bugsnag.com",
+          "api.bugsnag.com",
+          "app.bugsnag.com",
+          "browser.sentry-cdn.com",
+          "app.getsentry.com",
+          "widgets.pinterest.com"
+        ],
+        "action": "reject",
+        "method": "default"
+      },
+      {
+        "rule_set": [
+          "category-ads-all",
+          "category-porn"
+        ],
+        "action": "reject",
+        "method": "default"
+      }
+    ],
+    "rule_set": [
+      {
+        "type": "remote",
+        "tag": "category-ads-all",
+        "format": "binary",
+        "download_detour": "UrlTest",
+        "update_interval": "48h0m0s",
+        "path": "/etc/sing-box/rules/geosite-category-ads-all.srs",
+        "url": "https://raw.githubusercontent.com/Chocolate4U/Iran-sing-box-rules/rule-set/geosite-category-ads-all.srs"
+      },
+      {
+        "type": "remote",
+        "tag": "category-porn",
+        "format": "binary",
+        "download_detour": "UrlTest",
+        "update_interval": "48h0m0s",
+        "path": "/etc/sing-box/rules/geosite-category-porn.srs",
+        "url": "https://raw.githubusercontent.com/Chocolate4U/Iran-sing-box-rules/rule-set/geosite-category-porn.srs"
+      }
+    ],
+    "final": "Internet",
+    "default_mark": 666,
+    "auto_detect_interface": true
+  },
+  "experimental": {
+    "cache_file": {
+      "enabled": false,
+      "path": "/etc/sing-box/singbox-cache.db",
+      "store_rdrc": true
+    },
+    "clash_api": {
+      "external_controller": "0.0.0.0:9090",
+      "external_ui": "/etc/sing-box/ui",
+      "default_mode": "rule"
+    }
+  }
+}
